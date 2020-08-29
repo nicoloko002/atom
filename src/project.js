@@ -567,11 +567,16 @@ module.exports = class Project extends Model {
       // leave path alone if it has a scheme
       return uri;
     } else {
-      let projectPath;
+      let projectPath = this.getPaths()[0];
+
+      if (projectPath && ('C:\\' + uri).startsWith(projectPath)) {
+          uri = 'C:\\' + uri;
+      }
+
       if (fs.isAbsolute(uri)) {
         return this.defaultDirectoryProvider.normalizePath(fs.resolveHome(uri));
         // TODO: what should we do here when there are multiple directories?
-      } else if ((projectPath = this.getPaths()[0])) {
+      } else if (projectPath) {
         return this.defaultDirectoryProvider.normalizePath(
           fs.resolveHome(path.join(projectPath, uri))
         );
